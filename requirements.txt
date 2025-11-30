@@ -1,0 +1,14 @@
+streamlit
+pandas
+langchain
+langchain-community
+langchain-experimental
+langgraph
+crewai
+pyautogen
+llama-index
+openai
+pypdf
+python-dotenv
+faiss-cpu
+llama-index-vector-stores-faiss
