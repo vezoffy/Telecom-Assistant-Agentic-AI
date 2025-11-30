@@ -156,9 +156,21 @@ def process_network_query(query: str):
         message=query
     )
     
-    # In a real app, we might want to return the chat history or the last message
-    # For now, the chat prints to stdout
-    return "Chat completed."
+    # Extract the response from the group chat history
+    messages = manager.groupchat.messages
+    
+    # Look for the last message from the Solution Integrator
+    for msg in reversed(messages):
+        if msg.get("name") == "Solution_Integrator_Agent":
+            content = msg.get("content", "")
+            # Remove the termination keyword
+            return content.replace("TERMINATE", "").strip()
+            
+    # Fallback: Return the last message if Solution Integrator didn't speak (unlikely)
+    if messages:
+        return messages[-1].get("content", "")
+        
+    return "No response generated."
 
 if __name__ == "__main__":
     # Test run
