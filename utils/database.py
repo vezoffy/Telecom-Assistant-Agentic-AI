@@ -23,6 +23,22 @@ def get_database() -> SQLDatabase:
     
     return SQLDatabase.from_uri(db_uri)
 
+def initialize_logs_table():
+    """Creates the query_logs table if it doesn't exist."""
+    db = get_database()
+    create_table_sql = """
+    CREATE TABLE IF NOT EXISTS query_logs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+        customer_id TEXT,
+        query_text TEXT,
+        category TEXT,
+        sentiment_score REAL
+    );
+    """
+    db.run(create_table_sql)
+    print("Initialized query_logs table.")
+
 if __name__ == "__main__":
     try:
         db = get_database()

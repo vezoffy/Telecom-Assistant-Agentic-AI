@@ -12,3 +12,5 @@ pypdf
 python-dotenv
 faiss-cpu
 llama-index-vector-stores-faiss
+plotly
+textblob

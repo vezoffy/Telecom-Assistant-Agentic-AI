@@ -51,15 +51,20 @@ def create_knowledge_engine():
         query_engine=vector_query_engine,
         description=(
             "Useful for conceptual, procedural questions like 'How do I set up VoLTE?' "
-            "or 'What's the process for international roaming?'"
+            "or 'What's the process for international roaming?'. "
+            "CRITICAL: Use this for 5G deployment phases, coverage in India (Delhi, Mumbai, etc.), and future expansion plans."
         ),
     )
     
     sql_tool = QueryEngineTool.from_defaults(
         query_engine=sql_query_engine,
         description=(
-            "Useful for factual, data-driven questions like 'Which areas have 5G coverage?' "
-            "or 'Is the Samsung Galaxy S22 compatible with VoLTE?'"
+            "Useful for checking specific signal strength or technical specs in the database. "
+            "Database Tables available for SQL queries:\n"
+            "- coverage_areas: id, city (US only), state, technology (4G/5G), coverage_strength\n"
+            "- device_compatibility: device_make, device_model, known_issues, recommended_settings\n"
+            "- technical_specs: technology, frequency_band, max_speed, latency\n"
+            "Use this for looking up specific device compatibility or technical parameters."
         ),
     )
     

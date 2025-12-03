@@ -55,9 +55,16 @@ def create_billing_crew(customer_id: str, query: str):
         5. Answer general billing questions using the FAQ
         
         You have access to the following database tables:
-        - customers: customer_id, name, email, phone_number, service_plan_id, account_status
-        - customer_usage: usage_id, customer_id, billing_period_start, billing_period_end, data_used_gb, voice_minutes_used, sms_count_used, additional_charges, total_bill_amount
-        - service_plans: plan_id, name, monthly_cost, data_limit_gb, voice_minutes, sms_count, description
+        - customers: customer_id (PK), name, email, phone_number, service_plan_id (FK), account_status
+        - customer_usage: usage_id (PK), customer_id (FK), billing_period_start, billing_period_end, data_used_gb, voice_minutes_used, sms_count_used, additional_charges, total_bill_amount
+        - service_plans: plan_id (PK), name, monthly_cost, data_limit_gb, voice_minutes, sms_count, description
+        - billing_history: bill_id (PK), customer_id (FK), billing_period_start, billing_period_end, data_used_gb, voice_minutes_used, sms_count_used, additional_charges, total_bill_amount, payment_status, due_date
+
+        Note: 'additional_charges' refers to charges for Value Added Services (VAS) such as international roaming, premium content, or insurance.
+
+        Relationships:
+        - `customers.service_plan_id` links to `service_plans.plan_id` to get plan details.
+        - `customer_usage.customer_id` and `billing_history.customer_id` link to `customers.customer_id`.
         
         Use SQL to retrieve billing information, and be precise about numbers.
         Always start by retrieving the customer's most recent bill, then compare it with the previous bill to identify changes.
@@ -79,9 +86,12 @@ def create_billing_crew(customer_id: str, query: str):
         4. Suggest better plans if available
         
         You have access to the following database tables:
-        - customers: customer_id, name, service_plan_id
-        - customer_usage: usage_id, customer_id, billing_period_start, billing_period_end, data_used_gb, voice_minutes_used, sms_count_used, total_bill_amount
-        - service_plans: plan_id, name, monthly_cost, data_limit_gb, voice_minutes, sms_count, description
+        - customers: customer_id (PK), name, service_plan_id (FK)
+        - customer_usage: usage_id (PK), customer_id (FK), billing_period_start, billing_period_end, data_used_gb, voice_minutes_used, sms_count_used, total_bill_amount
+        - service_plans: plan_id (PK), name, monthly_cost, data_limit_gb, voice_minutes, sms_count, description
+        
+        Relationships:
+        - `customers.service_plan_id` links to `service_plans.plan_id`.
         
         Use SQL to retrieve the customer's usage data and plan details.
         Be specific about potential savings or benefits of your recommendations.""",
@@ -131,6 +141,10 @@ def create_billing_crew(customer_id: str, query: str):
         2. If there is an issue, explain why it happened.
         3. Incorporate the plan recommendations from the Service Advisor.
         4. Be polite, professional, and helpful.
+        
+        IMPORTANT FORMATTING RULES:
+        - Do NOT use a formal letter format (e.g., do not start with "Dear Customer" or similar).
+        - Provide the answer directly and concisely.
         """,
         expected_output="A comprehensive natural language response to the customer explaining their bill and offering recommendations.",
         agent=billing_specialist, # Or could be a separate "Coordinator" agent, but Specialist fits well here too
@@ -156,7 +170,7 @@ def process_billing_query(customer_id, query):
     # Process the query
     result = crew.kickoff()
     
-    return result
+    return str(result)
 
 if __name__ == "__main__":
     # Test run
